@@ -86,7 +86,7 @@
 
 	Name		Data Type	Meas.	Description
 	----		---------	-----	-----------
-	Sex		nominal			M, F, and I (infant)
+	Sex		nominal			M, F, and I (infant)(1, 2, 3)
 	Length		continuous	mm	Longest shell measurement
 	Diameter	continuous	mm	perpendicular to length
 	Height		continuous	mm	with meat in shell
