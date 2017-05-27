@@ -11,12 +11,12 @@ import argparse
 import os
 import matplotlib
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 " Cloumns setting"
 features = ('Sex', 'Length', 'Diameter', 'Height', 'Whole weight', 'Shucked weight', 'Viscera weight', 'Shell weight', 'Rings')
 classification_feature = 'Rings'
 classification_number = 29
-classification_k = 3
 
 
 def features_normalization (features):
@@ -70,13 +70,8 @@ def handle_testcase_samples(path, step, min):
     return normalization_matrix
 
 
-def classificationWieght(formatted_samples_class):
-    print(type(formatted_samples_class))
-
-
 def handle_samples_with_tensorflow (path):
     process_input_samples(path)
-
 
 parser = argparse.ArgumentParser (description='KNN - YHSPY')
 parser.add_argument('--samples', help = 'Input the path of sample file for KNN algorithm')
@@ -99,19 +94,16 @@ if os.path.exists(samples_path):
         for testcasae in samples_all_testcase_matrix:
             diffMat = tile(testcasae, [row_count, 1]) - samples_all_matrix
             " argsort return the index of elements after sorted"
-            distance = ((((diffMat ** 2).sum(axis = 1)) ** 0.5)).argsort()
+            distance = ((diffMat ** 2).sum(axis = 1)) ** 0.5
+            distanceSorted = distance.argsort()
             voteCount = {}
 
-            for i in range(classification_k):
-                voteLable = formatted_samples_class[distance[i]]
-                voteCount[voteLable] = voteCount.get(voteLable, 0) + 1
+            " General k"
+            for i in range(int(len(samples_all_matrix) ** 0.5)):
+                voteLable = formatted_samples_class[distanceSorted[i]]
+                voteCount[voteLable] = voteCount.get(voteLable, 0) + (1 / distance[distanceSorted[i]])
             " itermitems return an iterator used for dict "
             sortedVotes = sorted(voteCount.items(), key = operator.itemgetter(1), reverse = True)
-            print (sortedVotes)
-
-
+            print (sortedVotes[0][0])
 else:
     raise Exception('[Exception] Invalid path of input samples.')
-
-
-
