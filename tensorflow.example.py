@@ -9,7 +9,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 # Read dataset
 '''
-Datasets(train=<tensorflow.contrib.learn.python.learn.datasets.mnist.DataSet object at 0x114025fd0>, validation=<tensorflow.contrib.learn.python.learn.datasets.mnist.DataSet object
+Datasets(part_of_sample_images=<tensorflow.contrib.learn.python.learn.datasets.mnist.DataSet object at 0x114025fd0>, validation=<tensorflow.contrib.learn.python.learn.datasets.mnist.DataSet object
 at 0x10b667c50>, test=<tensorflow.contrib.learn.python.learn.datasets.mnist.DataSet object at 0x10b664780>)
 '''
 mnist = input_data.read_data_sets("MNIST_Data/data/", one_hot=True)

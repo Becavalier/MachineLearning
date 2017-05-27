@@ -5,6 +5,9 @@
 
 __author__ = 'YHSPY'
 
+import os
+# Silence warning logs
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 from numpy import *
 import operator
 import argparse
