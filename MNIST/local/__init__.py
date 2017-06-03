@@ -31,7 +31,7 @@ from tensorflow.python.framework import random_seed
 import struct
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
+from PIL import Image, ImageOps
 
 def save_local_images(filename, count):
     binfile = open(filename, 'rb')
@@ -50,4 +50,24 @@ def save_local_images(filename, count):
         im = Image.fromarray(im)
         im.save('part_of_sample_images/train_%s.bmp' % image, 'bmp')
 
+def process_image(path, reverse = False, scale = 28):
+    image_handler = Image.open(path)
+    image_out = image_handler.convert('L')
+    image_out = image_out.resize((scale, scale))
 
+    if reverse:
+        image_out = ImageOps.invert(image_out)
+
+    image_out_pixels_array = []
+    image_size_w, image_size_h = image_out.size
+    image_out_pixels = image_out.load()
+    for h in range(image_size_h):
+        for w in range(image_size_w):
+            # Filter
+            grey_level = image_out_pixels[w, h]
+            if (grey_level < 100):
+                grey_level = 0
+
+            image_out_pixels_array.append(float(grey_level))
+
+    return image_out_pixels_array

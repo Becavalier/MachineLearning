@@ -41,6 +41,9 @@ import scipy.ndimage
 
 FLAGS = None
 
+MODEL_SAVE_FILE_NAME = './models/mnist_deepnn_model.ckpt'
+MODEL_SAVE_CHECK_FILE_LOC = './models/checkpoint'
+
 
 def deepnn(x):
   """deepnn builds the graph for a deep net for classifying digits.
@@ -136,10 +139,26 @@ def main(_):
   train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
   correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
   accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+  saver = tf.train.Saver()
 
   with tf.Session() as sess:
+    # If model exists, use model instead
+    if os.path.exists(MODEL_SAVE_CHECK_FILE_LOC) and not FLAGS.retrain:
+      # Restrore models
+      saver.restore(sess, MODEL_SAVE_FILE_NAME)
+      # Predict directly
+      data = np.ndarray.flatten(np.array(local.process_image(FLAGS.test, True)))
+      # data = np.ndarray.flatten(scipy.ndimage.imread(FLAGS.test, flatten=True))
+      # data = np.vectorize(lambda x: 255 - x)(np.ndarray.flatten(scipy.ndimage.imread(FLAGS.test, flatten=True)))
+
+      # placeholder = tf.constant([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], shape=[1, 10], dtype=tf.float32)
+      placeholder = np.zeros([1, 10], dtype=float)
+      predict_number = sess.run(tf.argmax(y_conv, 1), feed_dict={x: [data], y_: placeholder, keep_prob: 1.0})
+      print('\nThis number may be: ', predict_number)
+      exit()
+
     sess.run(tf.global_variables_initializer())
-    for i in range(500):
+    for i in range(int(FLAGS.times)):
       batch = mnist.train.next_batch(50)
       if i % 100 == 0:
         train_accuracy = accuracy.eval(feed_dict={
@@ -150,14 +169,20 @@ def main(_):
     print('test accuracy %g' % accuracy.eval(feed_dict={
         x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
 
-    data = np.ndarray.flatten(scipy.ndimage.imread(FLAGS.test, flatten=True))
-    #data = np.vectorize(lambda x: 255 - x)(np.ndarray.flatten(scipy.ndimage.imread(FLAGS.test, flatten=True)))
+    if FLAGS.retrain:
+      saver.save(sess, MODEL_SAVE_FILE_NAME)
 
-    # placeholder = tf.constant([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], shape=[1, 10], dtype=tf.float32)
-    placeholder = np.zeros([1, 10], dtype=float)
+    if FLAGS.test:
+      data = np.ndarray.flatten(scipy.ndimage.imread(FLAGS.test, flatten=True))
+      # data = np.vectorize(lambda x: 255 - x)(np.ndarray.flatten(scipy.ndimage.imread(FLAGS.test, flatten=True)))
 
-    predict_number = sess.run(tf.argmax(y_conv, 1), feed_dict={x: [data], y_: placeholder, keep_prob: 1.0})
-    print('\nThis number may be: ', predict_number)
+      # placeholder = tf.constant([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], shape=[1, 10], dtype=tf.float32)
+      placeholder = np.zeros([1, 10], dtype=float)
+
+      predict_number = sess.run(tf.argmax(y_conv, 1), feed_dict={x: [data], y_: placeholder, keep_prob: 1.0})
+      print('\nThis number may be: ', predict_number)
+
+
 
 
 if __name__ == '__main__':
@@ -168,5 +193,14 @@ if __name__ == '__main__':
 
   parser.add_argument('--test', type=str,
                       help='Sample for test')
+
+  parser.add_argument('--times', type=str,
+                      help='Training times')
+
+  parser.add_argument('--retrain',
+                      default=False,
+                      help='Training times',
+                      action = 'store_true')
+
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
