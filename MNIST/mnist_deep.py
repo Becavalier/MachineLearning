@@ -8,7 +8,7 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# WITHOUT WARRANTIES OR reCONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
@@ -122,9 +122,6 @@ def bias_variable(shape):
 
 
 def main(_):
-  # Import data
-  mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
-
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784], name='x')
 
@@ -157,6 +154,9 @@ def main(_):
       print('\nThis number may be: ', predict_number)
       exit()
 
+    # Import data
+    mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+
     sess.run(tf.global_variables_initializer())
     for i in range(int(FLAGS.times)):
       batch = mnist.train.next_batch(50)
@@ -181,8 +181,6 @@ def main(_):
 
       predict_number = sess.run(tf.argmax(y_conv, 1), feed_dict={x: [data], y_: placeholder, keep_prob: 1.0})
       print('\nThis number may be: ', predict_number)
-
-
 
 
 if __name__ == '__main__':

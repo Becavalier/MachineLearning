@@ -69,5 +69,5 @@ def process_image(path, reverse = False, scale = 28):
                 grey_level = 0
 
             image_out_pixels_array.append(float(grey_level))
-
+    image_out.save('./semi-media.bmp')
     return image_out_pixels_array

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-" KNN - Machine Learning "
+" KNN - Machine Learning on Tensorflow"
 
 __author__ = 'YHSPY'
 
