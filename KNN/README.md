@@ -1,4 +1,7 @@
-### KNN
+# KNN
 
+### 普通型
+![KNN](https://raw.githubusercontent.com/Becavalier/MachineLearning/master/KNN/knn-normal.png)
 
-![KNN](https://raw.githubusercontent.com/Becavalier/MachineLearning/master/KNN/knn.png)
+### 加权型
+![KNN](https://raw.githubusercontent.com/Becavalier/MachineLearning/master/KNN/knn-mean.png)

@@ -34,6 +34,9 @@ def createDataSetFromFile(path):
             labels.append(row[-1])
     return array(group), labels
 
+# 高斯函数
+def gaussian(dist, a=1, b=0, c=0.3):
+    return a * math.e ** (-(dist - b) ** 2 / (2 * c ** 2))
 
 # 归一化；
 # *有时，归一化会消除数据重要的特征差异，从而导致精度下降。
