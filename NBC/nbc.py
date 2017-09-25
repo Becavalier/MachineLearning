@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy as np
+import re
 
 # 基于概率论的贝叶斯定理，适用于标称型（离散）数据；
 
 # 基于贝努利模型；
+
+def splitWords(text):
+    regEx = re.compile('\\W*')
+    listOfTokens = regEx.split(text)
+    return [tok.lower() for tok in listOfTokens if len(tok) > 0]
 
 def loadDataSet():
     postingList= [
@@ -37,9 +43,9 @@ def setOfWords2Vec(vocabList, inputSet):
     return returnVec
 
 def trainNB0(trainMatrix, trainCategory):
-    numTrainDocs = len(trainMatrix)
-    numWords = len(trainMatrix[0])
-    pAbusive = sum(trainCategory) / float(numTrainDocs) # 0.5
+    numTrainDocs = len(trainMatrix) # 6；
+    numWords = len(trainMatrix[0]) # 32；
+    pAbusive = sum(trainCategory) / float(numTrainDocs) # 3/6 = 0.5
     # 防止乘积均为0的情况；
     p0Num = np.ones(numWords)
     p1Num = np.ones(numWords)
@@ -53,12 +59,17 @@ def trainNB0(trainMatrix, trainCategory):
         else:
             p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
+    # 每一个单词在所有出现单词中的概率；
     # 取对数避免下溢出；
+    # 两个概率向量；
     p1Vect = np.log(p1Num/p1Denom)
     p0Vect = np.log(p0Num/p0Denom)
     return p0Vect, p1Vect, pAbusive
 
 def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
+    # pClass1 = pc1
+    # pClass0 = 1 - pc1
+    # ?
     p1 = sum(vec2Classify * p1Vec) + np.log(pClass1)
     p0 = sum(vec2Classify * p0Vec) + np.log(1 - pClass1)
     if p1 > p0:
@@ -69,6 +80,7 @@ def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
 
 if __name__ == '__main__':
     listOPosts, listClasses = loadDataSet()
+    # 所有词的集合；
     myVocabList = createVocabList(listOPosts)
     trainMat = []
     for postinDoc in listOPosts:
@@ -77,6 +89,7 @@ if __name__ == '__main__':
     p0V, p1V, pAb = trainNB0(trainMat, listClasses)
 
     testEntry = ['love', 'my', 'dalmatian']
-    print(setOfWords2Vec(myVocabList, testEntry))
     thisDoc = np.array(setOfWords2Vec(myVocabList, testEntry))
+    print(thisDoc)
+    print(p0V)
     print(classifyNB(thisDoc, p0V, p1V, pAb))
